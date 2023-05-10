@@ -45,6 +45,39 @@ async function run() {
 
         //Register Auth
 
+        //Check is Admin
+
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = {email:email};
+            const result = await usersCollection.findOne(query);
+            res.send(result);
+        })
+
+        //Add New products
+         app.post('/addproduct', async (req, res) => {            
+            const productName = { product_name: req.body.productName };
+            const productExist = await productsCollection.findOne(productName);
+            if (!productExist) {
+                const data = {
+                    product_name: req.body.productName,
+                    price: req.body.price,                    
+                    brand: req.body.brand,
+                    description: req.body.description,      
+                    img: req.body.imageLink,                    
+                    availibility: true,
+                    category: req.body.category,
+                    ratings: 0,
+                    size: req.body.sizes
+                };
+                const result = await productsCollection.insertOne(data);
+                res.send(result)
+            }else{
+                res.status(400).json({
+                    "error":'Product Exist'
+                })
+            }
+        })
 
 
 
