@@ -24,7 +24,7 @@ function verifyJWT(req, res, next) {
     const token = authHeader.split(' ')[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
         if (err) {
-            return res.status(403).send({ message: 'Forbidden access' })
+            return res.status(401).send({ message: 'Forbidden access' })
         }
         req.decoded = decoded;
         next();
@@ -39,7 +39,7 @@ async function run() {
     try {
 
         // Connection to Server and Databse Collections 
-         client.connect();
+        client.connect();
         const productsCollection = client.db('kinbaaNaki').collection('products');
         const usersCollection = client.db('kinbaaNaki').collection('users');
 
@@ -49,23 +49,23 @@ async function run() {
 
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
-            const query = {email:email};
+            const query = { email: email };
             const result = await usersCollection.findOne(query);
             res.send(result);
         })
 
         //Add New products
-         app.post('/addproduct', async (req, res) => {            
+        app.post('/addproduct', async (req, res) => {
             const productName = { product_name: req.body.productName };
             const productExist = await productsCollection.findOne(productName);
             if (!productExist) {
                 const data = {
                     product_name: req.body.productName,
-                    price: req.body.price,                    
+                    price: req.body.price,
                     brand: req.body.brand,
-                    description: req.body.description,      
-                    img: req.body.imageUrl,                    
-                    imgThree: req.body.imageThree,                    
+                    description: req.body.description,
+                    img: req.body.imageUrl,
+                    imgThree: req.body.imageThree,
                     availibility: true,
                     category: req.body.category,
                     ratings: 0,
@@ -73,9 +73,9 @@ async function run() {
                 };
                 const result = await productsCollection.insertOne(data);
                 res.send(result)
-            }else{
+            } else {
                 res.status(400).json({
-                    "error":'Product Exist'
+                    "error": 'Product Exist'
                 })
             }
         })
@@ -111,15 +111,15 @@ async function run() {
                 };
                 const result = await usersCollection.insertOne(data);
                 res.send(result)
-            }else{
+            } else {
                 res.status(400).json({
-                    "error":'User Exist'
+                    "error": 'User Exist'
                 })
             }
         })
 
-        
-        
+
+
 
 
 
