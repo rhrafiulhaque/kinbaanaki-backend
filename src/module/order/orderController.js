@@ -68,9 +68,9 @@ const addOrder = async (req, res, next) => {
             products,
             email,
             paidStatus: false,
-            tranjectionId: tran_id
+            tranjectionId: tran_id,
+            deliveryStatus: 'processing'
         }
-        console.log(finalOrder)
 
         const result = Order.create(finalOrder)
     } catch (err) {
@@ -100,11 +100,29 @@ const successPayment = async (req, res, next) => {
 
 const getOrderList = async (req, res, next) => {
     try {
-        console.log(req.params.email)
 
-        const result = await Order.find({ email: req.params.email }).exec();
+        const data = await Order.find({ email: req.params.email });
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Order List Found',
+            data
+        });
+    } catch (err) {
+        next(err)
+    }
+}
 
-        console.log(result)
+const getOrderDetails = async (req, res, next) => {
+    const { email, id } = req.query;
+    try {
+        const data = await Order.findOne({ email: email } && { _id: new ObjectId(id) });
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Order Details Found',
+            data
+        });
     } catch (err) {
         next(err)
     }
@@ -114,5 +132,8 @@ const getOrderList = async (req, res, next) => {
 module.exports = {
     addOrder,
     successPayment,
-    getOrderList
+    getOrderList,
+    getOrderDetails
 }
+
+

@@ -74,7 +74,6 @@ const updateUser = async (user) => {
     return result
 }
 const updateUserAddress = async (user) => {
-    console.log('updateaddress', user)
     const updateFields = {
         city: user.city,
         district: user.district,
