@@ -12,6 +12,9 @@ const orderSchema = mongoose.Schema({
     },
     email: {
         type: String
+    },
+    deliveryStatus: {
+        type: String
     }
 
 

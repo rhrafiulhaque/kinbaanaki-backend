@@ -27,6 +27,7 @@ const auth =
                         message: 'Invalid Access token',
                     });
                 }
+                console.log(verifiedUser)
 
                 if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
                     return res.status(401).json({

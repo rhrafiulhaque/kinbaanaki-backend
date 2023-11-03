@@ -58,6 +58,16 @@ const getUser = async (useremail) => {
     const user = await User.findOne({ email: useremail.email });
     return user
 }
+const getAllUser = async () => {
+
+    const users = await User.find();
+    return users
+}
+const getAdmin = async (useremail) => {
+
+    const user = await User.findOne({ email: useremail.email });
+    return user
+}
 
 const updateUser = async (user) => {
     const updateFields = {
@@ -95,5 +105,7 @@ module.exports = {
     loginUser,
     getUser,
     updateUser,
-    updateUserAddress
+    updateUserAddress,
+    getAdmin,
+    getAllUser
 }

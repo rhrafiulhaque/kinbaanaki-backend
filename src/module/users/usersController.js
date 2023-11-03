@@ -49,6 +49,33 @@ const getUser = async (req, res, next) => {
         next(err);
     }
 }
+const getAllUser = async (req, res, next) => {
+    try {
+        const user = await usersService.getAllUser();
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Users find successfully',
+            user
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+const getAdmin = async (req, res, next) => {
+    try {
+        const user = await usersService.getAdmin(req.params);
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Admin find successfully',
+            user
+        });
+    } catch (err) {
+        next(err);
+    }
+}
 const updateUser = async (req, res, next) => {
     try {
         const user = await usersService.updateUser(req.body);
@@ -81,5 +108,7 @@ module.exports = {
     loginUser,
     getUser,
     updateUser,
-    updateUserAddress
+    updateUserAddress,
+    getAdmin,
+    getAllUser
 }

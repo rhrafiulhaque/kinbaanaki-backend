@@ -5,7 +5,6 @@ const addProduct = async (product) => {
 
     const createProduct = Product.create(product)
     if (!createProduct) {
-
         // alter by Api Error
         res.status(400).json({
             success: false,

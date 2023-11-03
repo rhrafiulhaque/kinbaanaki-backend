@@ -4,7 +4,9 @@ const { auth } = require('../../app/middlewares/auth');
 
 const router = express.Router();
 router.post('/addorder', auth('User'), orderController.addOrder);
+router.patch('/updatedeliverystatus', auth('Admin'), orderController.updateDeliveryStatus);
 router.get('/getorderlist/:email', orderController.getOrderList);
+router.get('/admin/getorderlist/', orderController.adminGetOrderList);
 router.get('/getorderdetails/', orderController.getOrderDetails);
 router.post('/payment/success/:tranId', orderController.successPayment);
 module.exports = router

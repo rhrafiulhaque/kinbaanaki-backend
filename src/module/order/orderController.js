@@ -112,6 +112,20 @@ const getOrderList = async (req, res, next) => {
         next(err)
     }
 }
+const adminGetOrderList = async (req, res, next) => {
+    try {
+
+        const data = await Order.find();
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Order List Found',
+            data
+        });
+    } catch (err) {
+        next(err)
+    }
+}
 
 const getOrderDetails = async (req, res, next) => {
     const { email, id } = req.query;
@@ -127,13 +141,37 @@ const getOrderDetails = async (req, res, next) => {
         next(err)
     }
 }
+const updateDeliveryStatus = async (req, res, next) => {
+    try {
+
+        const updateFields = {
+            deliveryStatus: req.body.deliveryStatus
+        };
+        const data = await Order.findOneAndUpdate(
+            { email: req.body.email } && { _id: new ObjectId(req.body.id) },
+            { $set: updateFields },
+            { upsert: true }
+        );
+
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Order Updated Successfully',
+            data
+        });
+    } catch (err) {
+        next(err)
+    }
+}
 
 
 module.exports = {
     addOrder,
     successPayment,
     getOrderList,
-    getOrderDetails
+    getOrderDetails,
+    adminGetOrderList,
+    updateDeliveryStatus
 }
 
 
