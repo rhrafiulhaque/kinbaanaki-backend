@@ -23,6 +23,10 @@ const addUser = async (user) => {
 
 }
 
+const emailVerification = async () => {
+    const generateVerificationToken = crypto.randomBytes(20).toString('hex')
+}
+
 const loginUser = async (email, password) => {
     const userExist = await User.findOne({ email });
     if (!userExist) {
