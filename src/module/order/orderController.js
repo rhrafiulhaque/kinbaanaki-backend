@@ -165,13 +165,64 @@ const updateDeliveryStatus = async (req, res, next) => {
 }
 
 
+const monthlyOrder = async (req, res, next) => {
+    try {
+        const monthlyOrders = await Order.aggregate([
+            {
+                $project: {
+                    month: { $month: '$createdAt' },
+                    year: { $year: '$createdAt' },
+                }
+            },
+            {
+                $group: {
+                    _id: { month: '$month', year: '$year' },
+                    totalOrders: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id.year': 1, '_id.month': 1 }
+            }
+        ]);
+
+        res.json(monthlyOrders);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+const monthlyAddProduct = async (req, res, next) => {
+    try {
+        const monthlyProductCount = await Product.aggregate([
+            {
+                $group: {
+                    _id: {
+                        month: { $month: '$createdAt' },
+                        year: { $year: '$createdAt' }
+                    },
+                    productCount: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id.year': 1, '_id.month': 1 }
+            }
+        ]);
+
+        res.json(monthlyProductCount);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+
 module.exports = {
     addOrder,
     successPayment,
     getOrderList,
     getOrderDetails,
     adminGetOrderList,
-    updateDeliveryStatus
+    updateDeliveryStatus,
+    monthlyOrder,
+    monthlyAddProduct
 }
 
 

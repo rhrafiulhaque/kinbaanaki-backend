@@ -13,6 +13,22 @@ const addProduct = async (req, res, next) => {
         next(err)
     }
 }
+
+const updateProduct = async (req, res, next) => {
+    try {
+        const product = req.body
+        console.log('prodcut updt', product)
+        const result = await productService.updateProduct(product)
+        res.status(200).json({
+            success: true,
+            message: 'Product Updated successfully!',
+            data: result,
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 const getProduct = async (req, res, next) => {
     try {
         const result = await productService.getProduct()
@@ -38,6 +54,19 @@ const getProductById = async (req, res, next) => {
         next(err)
     }
 }
+const deleteProductById = async (req, res, next) => {
+    const { productId } = req.params
+    try {
+        const result = await productService.deleteProductById(productId)
+        res.status(200).json({
+            success: true,
+            message: 'Product Deleted successfully!',
+            product: result,
+        })
+    } catch (err) {
+        next(err)
+    }
+}
 const searchProduct = async (req, res, next) => {
     const { searchedKeyword } = req.params;
 
@@ -57,5 +86,7 @@ module.exports = {
     addProduct,
     getProduct,
     searchProduct,
-    getProductById
+    getProductById,
+    deleteProductById,
+    updateProduct
 }

@@ -1,15 +1,14 @@
 const mongoose = require("mongoose")
 
-const categorySchema = mongoose.Schema({
-    category: {
+const brandSchema = mongoose.Schema({
+    brand: {
         type: String,
         unique: true,
         required: true,
         collation: { locale: 'en', strength: 2 }
     },
-    catImg: {
+    brandImg: {
         type: String,
-        required: true
     }
 
 
@@ -20,6 +19,6 @@ const categorySchema = mongoose.Schema({
 
 )
 
-const Category = new mongoose.model("Categories", categorySchema)
+const Brand = new mongoose.model("Brands", brandSchema)
 
-module.exports = Category
+module.exports = Brand

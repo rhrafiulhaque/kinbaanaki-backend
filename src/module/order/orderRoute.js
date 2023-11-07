@@ -8,6 +8,8 @@ router.patch('/updatedeliverystatus', auth('Admin'), orderController.updateDeliv
 router.get('/getorderlist/:email', orderController.getOrderList);
 router.get('/admin/getorderlist/', orderController.adminGetOrderList);
 router.get('/getorderdetails/', orderController.getOrderDetails);
+router.get('/monthlyorder/', auth('Admin'), orderController.monthlyOrder);
+router.get('/monthlyaddproduct/', auth('Admin'), orderController.monthlyAddProduct);
 router.post('/payment/success/:tranId', orderController.successPayment);
 module.exports = router
 
