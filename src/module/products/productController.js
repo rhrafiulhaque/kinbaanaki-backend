@@ -72,9 +72,10 @@ const searchProduct = async (req, res, next) => {
 
     try {
         const result = await productService.getSearchedProduct(searchedKeyword)
+
         res.status(200).json({
             success: true,
-            message: 'Products retrived successfully!',
+            message: 'Serched Product Retrive Successfully!',
             data: result,
         })
     } catch (err) {

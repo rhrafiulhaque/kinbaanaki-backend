@@ -23,7 +23,7 @@ const updateProduct = async (product) => {
         brand: product.brand,
         category: product.category,
         description: product.description,
-        size: product.size,
+        sizes: product.sizes,
 
     } : {
         productName: product.productName,
@@ -32,8 +32,11 @@ const updateProduct = async (product) => {
         category: product.category,
         imageUrl: product.imageUrl,
         description: product.description,
-        size: product.size,
+        size: product.sizes,
     }
+
+    console.log('updateFields', updateFields)
+
     const data = await Product.findOneAndUpdate(
         { _id: new ObjectId(product.id) },
         { $set: updateFields },
@@ -79,7 +82,7 @@ const deleteProductById = async (productId) => {
 const getSearchedProduct = async (searchedKeyword) => {
     const searchCriteria = {
         $or: [
-            { name: { $regex: searchedKeyword, $options: 'i' } }, // Case-insensitive regex match on product name
+            { productName: { $regex: searchedKeyword, $options: 'i' } }, // Case-insensitive regex match on product name
             { category: { $regex: searchedKeyword, $options: 'i' } },
         ],
     };
