@@ -2,6 +2,7 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 const Product = require('../products/productModel')
 const { ObjectId } = require('mongodb')
 const Order = require('./orderModel')
+const productService = require('../products/productService');
 const store_id = process.env.STORE_ID
 const store_passwd = process.env.STORE_PASSWORD
 const is_live = false
@@ -64,15 +65,27 @@ const addOrder = async (req, res, next) => {
         });
 
 
+        for (const product of products) {
+            console.log(product)
+            await productService.updateProductSales(product._id, product.quantity);
+
+            const updatedProduct = await productService.updateAvailabeQuantity({
+                id: product._id,
+                quantity: product.quantity,
+            });
+        }
+
+
         const finalOrder = {
             products,
             email,
             paidStatus: false,
             tranjectionId: tran_id,
-            deliveryStatus: 'processing'
+            deliveryStatus: 'Processing'
         }
 
         const result = Order.create(finalOrder)
+
     } catch (err) {
         next(err)
     }

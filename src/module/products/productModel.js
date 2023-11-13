@@ -12,7 +12,7 @@ const productSchema = mongoose.Schema({
     old_price: Number,
     brand: {
         type: String,
-        required: true,
+
     },
     description: {
         type: String,
@@ -32,11 +32,27 @@ const productSchema = mongoose.Schema({
     ratings: {
         type: Number,
     },
+    sales: {
+        type: Number,
+        default: 0,
+    },
+    availableQuantity: {
+        type: Number,
+        required: true,
+    },
     size: [{
         type: String,
         required: true,
         enum: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL']
     }],
+    averageRating: {
+        type: Number,
+        default: 0,
+    },
+    ratingsQuantity: {
+        type: Number,
+        default: 0,
+    },
 
 },
     {

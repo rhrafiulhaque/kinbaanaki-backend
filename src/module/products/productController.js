@@ -29,6 +29,7 @@ const updateProduct = async (req, res, next) => {
     }
 }
 
+
 const getProduct = async (req, res, next) => {
     try {
         const result = await productService.getProduct()
@@ -41,6 +42,21 @@ const getProduct = async (req, res, next) => {
         next(err)
     }
 }
+const getTopSellingProducts = async (req, res, next) => {
+    try {
+        const result = await productService.getTopSellingProducts()
+        res.status(200).json({
+            success: true,
+            message: 'Top Products retrived successfully!',
+            products: result,
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+
+
 const getProductById = async (req, res, next) => {
     const { productId } = req.params
     try {
@@ -67,21 +83,44 @@ const deleteProductById = async (req, res, next) => {
         next(err)
     }
 }
+// const searchProduct = async (req, res, next) => {
+//     const { searchedKeyword } = req.params;
+
+//     try {
+//         const result = await productService.getSearchedProduct(searchedKeyword)
+
+//         res.status(200).json({
+//             success: true,
+//             message: 'Serched Product Retrive Successfully!',
+//             data: result,
+//         })
+//     } catch (err) {
+//         next(err)
+//     }
+// }
+
+
 const searchProduct = async (req, res, next) => {
-    const { searchedKeyword } = req.params;
+
+    const { searchKeyword, category, brand } = req.query;
 
     try {
-        const result = await productService.getSearchedProduct(searchedKeyword)
+        const result = await productService.getSearchedProduct({
+            searchKeyword: searchKeyword,
+            categoryFilter: category ? category.split(',') : [],
+            brandFilter: brand ? brand.split(',') : [],
+        });
 
         res.status(200).json({
             success: true,
-            message: 'Serched Product Retrive Successfully!',
+            message: 'Searched Product Retrieve Successfully!',
             data: result,
-        })
+        });
     } catch (err) {
-        next(err)
+        next(err);
     }
-}
+};
+
 
 module.exports = {
     addProduct,
@@ -89,5 +128,6 @@ module.exports = {
     searchProduct,
     getProductById,
     deleteProductById,
-    updateProduct
+    updateProduct,
+    getTopSellingProducts
 }

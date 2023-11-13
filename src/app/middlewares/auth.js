@@ -1,4 +1,4 @@
-const { JsonWebTokenError } = require("jsonwebtoken");
+
 const jwt = require("jwt-decode")
 
 const auth =
@@ -20,6 +20,7 @@ const auth =
                     verifiedUser = jwt(
                         token
                     );
+
                 } catch (error) {
                     return res.status(401).json({
                         success: false,

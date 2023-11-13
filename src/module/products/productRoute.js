@@ -7,7 +7,8 @@ const router = express.Router();
 router.post('/addproduct', auth('Admin'), productController.addProduct);
 router.patch('/updateproduct', auth('Admin'), productController.updateProduct);
 router.get('/', productController.getProduct)
-router.get('/search/:searchedKeyword', productController.searchProduct)
+router.get('/gettopproductsold', productController.getTopSellingProducts)
+router.get('/search/', productController.searchProduct)
 router.get('/:productId', productController.getProductById)
 router.delete('/:productId', productController.deleteProductById)
 
