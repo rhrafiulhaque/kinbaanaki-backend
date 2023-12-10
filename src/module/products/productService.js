@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const ApiError = require("../../error/ApiError");
-const Product = require("./productModel")
+const Product = require("./productModel");
+const { calculatePagination } = require("../../app/shared/helper");
 
 const addProduct = async (product) => {
 
@@ -69,22 +70,31 @@ const updateAvailabeQuantity = async (updateProduct) => {
     } catch (err) {
         throw new ApiError(400, "Failed to update product availableQuantity: " + err.message);
     }
-
-
 }
-const getProduct = async () => {
+const getProduct = async (paginationOptions) => {
 
-    const allProduct = await Product.find()
+    const { page, limit, skip, sortBy, sortOrder } = calculatePagination(paginationOptions);
+    const sortConditions = {};
+    if (sortBy && sortOrder) {
+        sortConditions[sortBy] = sortOrder;
+    }
+    const allProduct = await Product.find().sort(sortConditions).skip(skip).limit(limit)
+    const total = await Product.countDocuments();
     if (allProduct.length === 0) {
 
         throw new ApiError(400, "There have no products")
     }
-    return allProduct;
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+        },
+        allProduct
+    };
 
 }
 const getProductById = async (productId) => {
-
-
     const product = await Product.findById(productId)
     if (product.length === 0 || product.length === null) {
 

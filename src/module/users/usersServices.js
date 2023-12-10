@@ -4,48 +4,89 @@ const User = require("./usersModel");
 const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
+
+
+const sendVerifyEmail = async (name, email, id) => {
+    console.log(email)
+    try {
+        const transporter = nodemailer.createTransport({
+            // host: "smtp.ethereal.email",
+            service: 'gmail',
+            port: 587,
+            auth: {
+                user: 'abuhanjp@gmail.com',
+                pass: 'djnz pnli wpro iono'
+            }
+        })
+
+        let info = await transporter.sendMail({
+            from: '"KinbaaNaki" <kinbaanakiadmin@gmail.com>',
+            to: email,
+            subject: "Verification",
+            html: `<p>Hello ${name},please click here to <a href="http://localhost:5000/api/v1/user/verifyemail?id=${id}">Verify</a> your Email`
+            // html: `<p>Hello ${name},please click here to <a href="kinbaanaki-backend.vercel.app/api/v1/user/verifyemail?id=${id}">Verify</a> your Email`
+        })
+
+        console.log(`Message sent, ${info.messageId}`)
+        return info;
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 
 const addUser = async (user) => {
     user.password = await bcrypt.hash(user.password, 10)
-    const createUser = await User.create(user)
-    if (!createUser) {
-        throw new ApiError(501, 'User Doesnot Added!!')
+    const userEmail = user.email
+    const userExist = await User.findOne({ email: userEmail });
+    if (!userExist) {
+        const createUser = await User.create(user)
+        // console.log(createUser._id)
+        if (!createUser) {
+            throw new ApiError(501, 'User Doesnot Added!!')
+        }
+
+        //mail to go 
+        sendVerifyEmail(user.name, user.email, createUser._id)
+
+
+        const { password, ...userWithoutPassword } = createUser.toObject()
+        return userWithoutPassword
+
+    } else {
+        throw new ApiError(501, 'Email Already Registered!')
     }
-    const { password, ...userWithoutPassword } = createUser.toObject()
-
-    const accessToken = generateAccessToken(
-        userWithoutPassword._id.toString(),
-        userWithoutPassword.role,
-        userWithoutPassword.email,
-        userWithoutPassword.name
-    )
-    return { accessToken, userWithoutPassword }
 
 }
 
-const emailVerification = async () => {
-    const generateVerificationToken = crypto.randomBytes(20).toString('hex')
+const verifyEmail = async (userId) => {
+    const updateInfo = await User.updateOne({ _id: userId }, { $set: { isVerified: true } })
+    return updateInfo;
+
 }
+
 
 const loginUser = async (email, password) => {
     const userExist = await User.findOne({ email });
     if (!userExist) {
         throw new ApiError(404, 'User not found');
     }
+    if (userExist && userExist.isVerified) {
+        const passwordMatched = await bcrypt.compare(password, userExist.password);
+        if (!passwordMatched) {
+            throw new ApiError(401, 'Invalid password');
+        }
 
-    const passwordMatched = await bcrypt.compare(password, userExist.password);
-    if (!passwordMatched) {
-        throw new ApiError(401, 'Invalid password');
+        const accessToken = generateAccessToken(
+            userExist._id.toString(),
+            userExist.role,
+            userExist.email,
+            userExist.name
+        )
+        return accessToken;
+    } else {
+        throw new ApiError(501, 'Please Verify your Email. If you not receive any email on your inbox then check the spam');
     }
-
-    const accessToken = generateAccessToken(
-        userExist._id.toString(),
-        userExist.role,
-        userExist.email,
-        userExist.name
-    )
-    return accessToken;
-
 }
 
 
@@ -58,7 +99,6 @@ const generateAccessToken = (userId, role, email, name) => {
 
 
 const getUser = async (useremail) => {
-
     const user = await User.findOne({ email: useremail.email });
     return user
 }
@@ -69,7 +109,7 @@ const getAllUser = async () => {
 }
 const getAdmin = async (useremail) => {
 
-    const user = await User.findOne({ email: useremail.email });
+    const user = await User.findOne({ email: useremail.email }).select('-password');
     return user
 }
 
@@ -111,5 +151,6 @@ module.exports = {
     updateUser,
     updateUserAddress,
     getAdmin,
-    getAllUser
+    getAllUser,
+    verifyEmail
 }

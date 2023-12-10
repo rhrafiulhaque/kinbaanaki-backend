@@ -45,6 +45,18 @@ const getReviewsByUserId = async (req, res, next) => {
         next(new ApiError(400, error.message));
     }
 };
+const getAllReviews = async (req, res, next) => {
+    try {
+        const reviews = await reviewService.getAllReviews();
+        res.status(200).json({
+            success: true,
+            message: 'Reviews retrieved successfully!',
+            data: reviews,
+        });
+    } catch (error) {
+        next(new ApiError(400, error.message));
+    }
+};
 const deleteReviewsByUserId = async (req, res, next) => {
     const { userId, userEmail, revId } = req.params;
     try {
@@ -91,5 +103,6 @@ module.exports = {
     getReviewsByUserId,
     deleteReviewsByUserId,
     getReviewByUserIdAndReviewId,
-    updateReview
+    updateReview,
+    getAllReviews
 };

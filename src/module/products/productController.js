@@ -1,3 +1,4 @@
+const { pick, paginationFields } = require("../../app/shared/helper")
 const productService = require("./productService")
 
 const addProduct = async (req, res, next) => {
@@ -31,12 +32,14 @@ const updateProduct = async (req, res, next) => {
 
 
 const getProduct = async (req, res, next) => {
+    const paginationOptions = pick(req.query, paginationFields)
     try {
-        const result = await productService.getProduct()
+        const result = await productService.getProduct(paginationOptions)
         res.status(200).json({
             success: true,
             message: 'Product retrived successfully!',
-            products: result,
+            meta: result.meta,
+            products: result.allProduct,
         })
     } catch (err) {
         next(err)

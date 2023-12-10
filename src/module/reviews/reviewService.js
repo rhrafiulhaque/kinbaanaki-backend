@@ -31,6 +31,14 @@ const getReviewsByUserId = async (userId, userEmail) => {
         throw new Error('Failed to get reviews: ' + error.message);
     }
 };
+const getAllReviews = async () => {
+    try {
+        const reviews = await Review.find();
+        return reviews;
+    } catch (error) {
+        throw new Error('Failed to get reviews: ' + error.message);
+    }
+};
 const deleteReviewsByUserId = async (userId, userEmail, revId) => {
     try {
         const review = await Review.findOne({ userId, userEmail, _id: revId });
@@ -89,5 +97,6 @@ module.exports = {
     getReviewsByUserId,
     deleteReviewsByUserId,
     getReviewByUserIdAndReviewId,
-    updateReview
+    updateReview,
+    getAllReviews
 };

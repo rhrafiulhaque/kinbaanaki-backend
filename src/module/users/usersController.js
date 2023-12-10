@@ -3,18 +3,37 @@ const signUpUser = async (req, res, next) => {
     try {
         const user = req.body
         const result = await usersService.addUser(user)
-        res.cookie('accessToken', result.accessToken, {
-            httpOnly: true,
-        });
-        res.status(200).json({
-            success: true,
-            message: 'User added successfully!',
-            data: result,
-        })
+        if (result) {
+            res.status(200).json({
+                success: true,
+                message: 'User added successfully!',
+                data: result,
+            })
+        }
+
     } catch (err) {
         next(err)
     }
 }
+
+const verifyEmail = async (req, res, next) => {
+
+    try {
+        const userId = req.query.id
+        const result = await usersService.verifyEmail(userId)
+        if (result.modifiedCount === 1) {
+            res.redirect('http://localhost:3000/verify-email')
+            // res.redirect('https://kinbaanaki.web.app/verify-email')
+        } else {
+
+            res.status(404).json({ message: 'Verify Email not found' });
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -110,5 +129,6 @@ module.exports = {
     updateUser,
     updateUserAddress,
     getAdmin,
-    getAllUser
+    getAllUser,
+    verifyEmail
 }
